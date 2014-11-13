@@ -12,5 +12,7 @@ Tips:
 - Necesitarán utilizar el *Android Device Monitor* para entender un poco qué está sucediendo.
 - En caso de que no terminen de entender qué sucede con el Device Monitor, pueden hacer un dump del Heap y analizarlo con el *Memory Analizer Tool*
 
+[Memory Analizer Tool - Download](http://www.eclipse.org/downloads/download.php?file=/mat/1.4/rcp/MemoryAnalyzer-1.4.0.20140604-macosx.cocoa.x86_64.zip)
+
 *Ayuda con carpa*:
 Estará manejando correctamente la cantidad de objetos la app?
