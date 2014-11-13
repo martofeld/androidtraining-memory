@@ -44,18 +44,17 @@ public class StepsTracker {
             return;
 
         Log.d(TAG, "Dumping steps until UI was hidden");
-        trackCurrentSteps(true);
+        trackCurrentInnerSteps();
     }
 
     /**
      * Dump steps in Logcat
      */
-    private void trackCurrentSteps(boolean saveInCache){
+    private void trackCurrentInnerSteps(){
         while (!activityStack.isEmpty()){
             Activity activity = activityStack.poll();
             Log.d(TAG, activity.getLocalClassName());
-            if (saveInCache)
-                activityCache.add(activity);
+            activityCache.add(activity);
         }
     }
 
@@ -66,9 +65,8 @@ public class StepsTracker {
             for (Activity activity : activityCache){
                 Log.d(TAG, activity.getLocalClassName());
             }
-//            activityCache.clear();
         }
 
-        trackCurrentSteps(false);
+        trackCurrentInnerSteps();
     }
 }
