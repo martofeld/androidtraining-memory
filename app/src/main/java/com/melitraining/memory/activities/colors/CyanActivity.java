@@ -18,4 +18,9 @@ public class CyanActivity extends AbstractColorActivity {
     protected Drawable getDrawable() {
         return getResources().getDrawable(R.drawable.cyan);
     }
+
+    @Override
+    protected int getResourceId() {
+        return R.drawable.cyan;
+    }
 }

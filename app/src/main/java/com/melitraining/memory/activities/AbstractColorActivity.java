@@ -2,6 +2,10 @@ package com.melitraining.memory.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -11,8 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.melitraining.memory.R;
-import com.melitraining.memory.activities.colors.CyanActivity;
 import com.melitraining.memory.activities.colors.BlueActivity;
+import com.melitraining.memory.activities.colors.CyanActivity;
 import com.melitraining.memory.activities.colors.GreenActivity;
 import com.melitraining.memory.activities.colors.RedActivity;
 import com.melitraining.memory.tracking.StepsTracker;
@@ -22,23 +26,33 @@ import com.melitraining.memory.util.GlobalCounter;
  * Created by ngiagnoni on 11/12/14.
  */
 public abstract class AbstractColorActivity extends Activity {
+    TextView counter;
+    RelativeLayout container;
+    Drawable drawable;
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_abstract_color);
-        RelativeLayout container = (RelativeLayout) findViewById(R.id.color);
-        TextView counter = (TextView) findViewById(R.id.counter);
-        counter.setText(String.valueOf(GlobalCounter.COUNTER));
-        container.setBackground(getDrawable());
+        drawable = decodeSampledBitmapFromResource(getResources(), getResourceId(), 10, 10);
+
+        container = (RelativeLayout) findViewById(R.id.color);
+        container.setBackground(drawable);
         container.setOnTouchListener(listener);
-        StepsTracker.getInstance().addActivityStep(this);
+
+        counter = (TextView) findViewById(R.id.counter);
+        counter.setText(String.valueOf(GlobalCounter.COUNTER));
+
+        StepsTracker.getInstance().addActivityStep(this.getClass().getName());
     }
 
 
     static final int MIN_DISTANCE = 100;
     private float downX, downY, upX, upY;
 
-    private void startColorActivity(Class clasz){
+    private void startColorActivity(Class clasz) {
+        counter = null;
+        container = null;
+        drawable = null;
         GlobalCounter.COUNTER++;
         Intent i = new Intent(this, clasz);
         startActivity(i);
@@ -132,22 +146,64 @@ public abstract class AbstractColorActivity extends Activity {
 
     /**
      * Get a solid background color for my current container
+     *
      * @return Solid color
      */
     protected abstract int getBackColor();
 
     /**
      * Get a bitmap background drawable for my current container
+     *
      * @return Background drawable
      */
     protected abstract Drawable getDrawable();
 
+    protected abstract int getResourceId();
+
     @Override
     public void onTrimMemory(int level) {
-        if (level == TRIM_MEMORY_UI_HIDDEN){
+        if (level == TRIM_MEMORY_UI_HIDDEN) {
             StepsTracker.getInstance().trackCurrentSteps();
         }
 
         super.onTrimMemory(level);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Drawable decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return new BitmapDrawable(res, BitmapFactory.decodeResource(res, resId, options));
     }
 }

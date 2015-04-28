@@ -24,8 +24,8 @@ public class StepsTracker {
      */
     private StepsTracker(){}
 
-    private Queue<Activity> activityStack = new ConcurrentLinkedQueue<Activity>();
-    private LinkedList<Activity> activityCache = new LinkedList<Activity>();
+    private Queue<String> activityStack = new ConcurrentLinkedQueue<String>();
+    private LinkedList<String> activityCache = new LinkedList<String>();
 
     public static StepsTracker getInstance(){
         return INSTANCE;
@@ -35,7 +35,7 @@ public class StepsTracker {
      * Add new step to track
      * @param activity Activity to track
      */
-    public void addActivityStep(Activity activity){
+    public void addActivityStep(String activity){
         activityStack.offer(activity);
     }
 
@@ -52,8 +52,8 @@ public class StepsTracker {
      */
     private void trackCurrentInnerSteps(){
         while (!activityStack.isEmpty()){
-            Activity activity = activityStack.poll();
-            Log.d(TAG, activity.getLocalClassName());
+            String activity = activityStack.poll();
+            Log.d(TAG, activity + "DSADSA");
             activityCache.add(activity);
         }
     }
@@ -62,8 +62,8 @@ public class StepsTracker {
         Log.d(TAG, "Dumping steps because of long press");
 
         if (!activityCache.isEmpty()){
-            for (Activity activity : activityCache){
-                Log.d(TAG, activity.getLocalClassName());
+            for (String activity : activityCache){
+                Log.d(TAG, activity + "ASDASD");
             }
         }
 

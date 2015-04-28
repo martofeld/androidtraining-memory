@@ -18,4 +18,9 @@ public class BlueActivity extends AbstractColorActivity {
     protected Drawable getDrawable() {
         return getResources().getDrawable(R.drawable.blue);
     }
+
+    @Override
+    protected int getResourceId() {
+        return R.drawable.blue;
+    }
 }
